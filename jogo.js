@@ -52,7 +52,7 @@ function criachao() {
     y: canvas.height - 112,
     atualiza() {
       const movimentodochao = 1;
-      const repeteem= chao.largura / 2;
+      const repeteem = chao.largura / 2;
       const movimentacao = chao.x - movimentodochao;
 
       //console.log('chao.x', chao.x);
@@ -61,7 +61,7 @@ function criachao() {
 
       chao.x = movimentacao % repeteem;
     },
-  desenha() {
+    desenha() {
       contexto.drawImage(
         sprites,
         chao.spritex, chao.spritey,
@@ -111,19 +111,17 @@ function criaflappybird() {
       if (fazcolisao(flappybird, globais.chao)) {
         console.log('fez colisao');
         som_hit.play();
+        mudaparatela(telas.game_over);
 
-        setTimeout(() => {
-          mudaparatela(telas.inicio);
-        }, 500);
         return;
       }
       flappybird.velocidade = flappybird.velocidade + flappybird.gravidade;
       flappybird.y = flappybird.y + flappybird.velocidade;
     },
     movimentos: [
-      {spritex: 0, spritey: 0, },
-      {spritex: 0, spritey: 26, },
-      {spritex: 0, spritey: 52, },
+      { spritex: 0, spritey: 0, },
+      { spritex: 0, spritey: 26, },
+      { spritex: 0, spritey: 52, },
     ],
     frameatual: 0,
     atualizaoframeatual() {
@@ -131,16 +129,16 @@ function criaflappybird() {
       const passouointervalo = frames % intervalodeframes === 0;
       //console.log('passouointervalo', passouointervalo)
 
-    if(passouointervalo) {
-      const basedoincremento = 1;
-      const incremento = basedoincremento + flappybird.frameatual;
-      const baserepeticao = flappybird.movimentos.length;
-      flappybird.frameatual = incremento % baserepeticao
-    }
+      if (passouointervalo) {
+        const basedoincremento = 1;
+        const incremento = basedoincremento + flappybird.frameatual;
+        const baserepeticao = flappybird.movimentos.length;
+        flappybird.frameatual = incremento % baserepeticao
+      }
     },
     desenha() {
       flappybird.atualizaoframeatual();
-      const {spritex, spritey} = flappybird.movimentos[flappybird.frameatual];
+      const { spritex, spritey } = flappybird.movimentos[flappybird.frameatual];
 
       contexto.drawImage(
         sprites,
@@ -170,103 +168,142 @@ const mensagemGetReady = {
     );
   }
 }
+const mensagemgameover = {
+  sx: 134,
+  sy: 152,
+  w: 226,
+  h: 200,
+  x: (canvas.width / 2) - 226 / 2,
+  y: 50,
+  desenha() {
+    contexto.drawImage(
+      sprites,
+      mensagemgameover.sx, mensagemgameover.sy,
+      mensagemgameover.w, mensagemgameover.h,
+      mensagemgameover.x, mensagemgameover.y,
+      mensagemgameover.w, mensagemgameover.h,
+    );
+  }
+}
 //canos
 
 function criacanos() {
   const canos = {
-    largura:52,
-    altura:400,
+    largura: 52,
+    altura: 400,
     chao: {
       spritex: 0,
       spritey: 169,
     },
     ceu: {
-      spritex:52,
+      spritex: 52,
       spritey: 169,
     },
     espaco: 80,
     desenha() {
-      canos.pares.forEach(function(par){
+      canos.pares.forEach(function (par) {
         const yrandom = par.y;
         const espacamentoentrecanos = 90;
-  
+
         const canoceux = par.x;
         const canoceuy = yrandom;
-      
-      // cano do céu
-      contexto.drawImage(
-        sprites,
-        canos.ceu.spritex, canos.ceu.spritey,
-        canos.largura, canos.altura,
-        canoceux, canoceuy,
-        canos.largura, canos.altura,
-      )
+
+        // cano do céu
+        contexto.drawImage(
+          sprites,
+          canos.ceu.spritex, canos.ceu.spritey,
+          canos.largura, canos.altura,
+          canoceux, canoceuy,
+          canos.largura, canos.altura,
+        )
         // cano do chão
-      const canochaox =par.x;
-      const canochaoy = canos.altura + espacamentoentrecanos + yrandom;
-      contexto.drawImage(
-        sprites,
-        canos.chao.spritex, canos.chao.spritey,
-        canos.largura, canos.altura,
-        canochaox, canochaoy,
-        canos.largura, canos.altura,
-      )
+        const canochaox = par.x;
+        const canochaoy = canos.altura + espacamentoentrecanos + yrandom;
+        contexto.drawImage(
+          sprites,
+          canos.chao.spritex, canos.chao.spritey,
+          canos.largura, canos.altura,
+          canochaox, canochaoy,
+          canos.largura, canos.altura,
+        )
 
-      par.canoceu = {
-        x: canoceux,
-        y: canos.altura + canoceuy
-      }
-      par.canochao = {
-        x: canochaox,
-        y: canochaoy
-      }
-    })
-  },
-  temcolisaocomoflappybird(par) {
-    const cabecadoflappy = globais.flappybird.y;
-    const pedoflappy = globais.flappybird.y + globais.flappybird.altura;
+        par.canoceu = {
+          x: canoceux,
+          y: canos.altura + canoceuy
+        }
+        par.canochao = {
+          x: canochaox,
+          y: canochaoy
+        }
+      })
+    },
+    temcolisaocomoflappybird(par) {
+      const cabecadoflappy = globais.flappybird.y;
+      const pedoflappy = globais.flappybird.y + globais.flappybird.altura;
 
-    if(globais.flappybird.x >= par.x) {
-      if(cabecadoflappy <= par.canoceu.y) {
-        return true;
+      if ((globais.flappybird.x + globais.flappybird.largura) >= par.x) {
+        if (cabecadoflappy <= par.canoceu.y) {
+          return true;
+        }
+
+        if (pedoflappy >= par.canochao.y) {
+          return true;
+        }
+      }
+      return false;
+    },
+    pares: [],
+    atualiza() {
+      const passou100frames = frames % 100 === 0;
+      if (passou100frames) {
+        console.log('Passou 100 frames');
+        canos.pares.push({
+          x: canvas.width,
+          y: -150 * (Math.random() + 1),
+        });
       }
 
-      if(pedoflappy >= par.canochao.y) {
-        return true;
-      }
-    }
-    return false;
-  },
-  pares: [],
-  atualiza() {
-    const passou100frames = frames % 100 === 0;
-    if(passou100frames) {
-      console.log('Passou 100 frames');
-      canos.pares.push({
-        x: canvas.width,
-        y: -150 * (Math.random() + 1),
+
+
+      canos.pares.forEach(function (par) {
+        par.x = par.x - 2;
+
+        if (canos.temcolisaocomoflappybird(par)) {
+          console.log('Você perdeu!')
+          som_hit.play();
+          mudaparatela(telas.game_over);
+        }
+
+        if (par.x + canos.largura <= 0) {
+          canos.pares.shift();
+        }
       });
+
     }
-
-
-
-    canos.pares.forEach(function(par) {
-      par.x = par.x - 2;
-
-      if(canos.temcolisaocomoflappybird (par)) {
-        console.log('Você perdeu!')
-        mudaparatela(telas.inicio);
-      }
-
-      if(par.x + canos.largura <= 0) {
-        canos.pares.shift();
-      }
-    });
-
   }
-}
-   
+
   return canos;
+}
+
+function criaplacar() {
+  const placar = {
+    pontuacao: 0,
+    desenha() {
+      contexto.font = '35px "VT323"';
+      contexto.textAlign = 'right';
+      contexto.fillStyle = 'white';
+      contexto.fillText(`${placar.pontuacao}`, canvas.width - 10, 35);
+    },
+    atualiza() {
+      const intervalodeframes = 20;
+      const passouointervalo = frames % intervalodeframes === 0;
+
+      if (passouointervalo) {
+        placar.pontuacao = placar.pontuacao + 1;
+      }
+    }
+  }
+  return placar;
 }
 
 
@@ -275,6 +312,7 @@ const globais = {};
 let telaativa = {};
 function mudaparatela(novatela) {
   telaativa = novatela;
+
   if (telaativa.inicializa) {
     telaativa.inicializa();
   }
@@ -289,8 +327,8 @@ const telas = {
     },
     desenha() {
       planoDeFundo.desenha();
-      globais.chao.desenha();
       globais.flappybird.desenha();
+
       globais.chao.desenha();
       mensagemGetReady.desenha();
     },
@@ -300,17 +338,21 @@ const telas = {
     atualiza() {
 
       globais.chao.atualiza();
-      
+
     }
   }
 };
 
 telas.jogo = {
+  inicializa() {
+    globais.placar = criaplacar();
+  },
   desenha() {
     planoDeFundo.desenha();
     globais.canos.desenha();
     globais.chao.desenha();
     globais.flappybird.desenha();
+    globais.placar.desenha();
   },
   click() {
     globais.flappybird.pula();
@@ -319,8 +361,21 @@ telas.jogo = {
     globais.canos.atualiza();
     globais.chao.atualiza();
     globais.flappybird.atualiza();
+    globais.placar.atualiza();
   }
 };
+
+telas.game_over = {
+  desenha() {
+    mensagemgameover.desenha();
+  },
+  atualiza() {
+
+  },
+  click() {
+    mudaparatela(telas.inicio);
+  }
+}
 
 function loop() {
   telaativa.desenha();
