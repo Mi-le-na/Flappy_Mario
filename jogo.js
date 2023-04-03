@@ -1,42 +1,45 @@
-console.log('[Mi-le-na] Flappy Bird');
+console.log('[Mi-le-na] Flappy Mario');
 
 let frames = 0;
 const som_hit = new Audio();
 som_hit.src = './efeitos/hit.wav';
 
+const music = new Audio();
+music.src = './theme.mp3';
+
 const sprites = new Image();
-sprites.src = './sprites.png';
+sprites.src = './spritess.png';
 
 const canvas = document.querySelector('canvas');
 const contexto = canvas.getContext('2d');
 
 
 // [Plano de Fundo]
-const planoDeFundo = {
+const planodefundo = {
   spritex: 390,
   spritey: 0,
   largura: 275,
   altura: 204,
   x: 0,
-  y: canvas.height - 204,
+  y: canvas.height - 290,
   desenha() {
-    contexto.fillStyle = '#70c5ce';
+    contexto.fillStyle = '#fae5bd';
     contexto.fillRect(0, 0, canvas.width, canvas.height)
 
     contexto.drawImage(
       sprites,
-      planoDeFundo.spritex, planoDeFundo.spritey,
-      planoDeFundo.largura, planoDeFundo.altura,
-      planoDeFundo.x, planoDeFundo.y,
-      planoDeFundo.largura, planoDeFundo.altura,
+      planodefundo.spritex, planodefundo.spritey,
+      planodefundo.largura, planodefundo.altura,
+      planodefundo.x, planodefundo.y,
+      planodefundo.largura, planodefundo.altura,
     );
 
     contexto.drawImage(
       sprites,
-      planoDeFundo.spritex, planoDeFundo.spritey,
-      planoDeFundo.largura, planoDeFundo.altura,
-      (planoDeFundo.x + planoDeFundo.largura), planoDeFundo.y,
-      planoDeFundo.largura, planoDeFundo.altura,
+      planodefundo.spritex, planodefundo.spritey,
+      planodefundo.largura, planodefundo.altura,
+      (planodefundo.x + planodefundo.largura), planodefundo.y,
+      planodefundo.largura, planodefundo.altura,
     );
   },
 };
@@ -95,33 +98,35 @@ function criaflappybird() {
   const flappybird = {
     spritex: 0,
     spritey: 0,
-    largura: 33,
-    altura: 24,
+    largura: 26,
+    altura: 29,
     x: 10,
     y: 50,
     pulo: 4.6,
     pula() {
-      console.log('devopular');
-      flappybird.velocidade = -flappybird.pulo;
+      console.log('devo pular');
+      console.log('[antes]', flappybird.velocidade);
+      flappybird.velocidade =  - flappybird.pulo;
+      console.log('[depois]', flappybird.velocidade);
     },
     gravidade: 0.25,
     velocidade: 0,
-
     atualiza() {
-      if (fazcolisao(flappybird, globais.chao)) {
-        console.log('fez colisao');
+      if(fazcolisao(flappybird, globais.chao)) {
+        console.log('Fez colisao');
         som_hit.play();
         mudaparatela(telas.game_over);
-
         return;
       }
+  
       flappybird.velocidade = flappybird.velocidade + flappybird.gravidade;
       flappybird.y = flappybird.y + flappybird.velocidade;
     },
     movimentos: [
-      { spritex: 0, spritey: 0, },
-      { spritex: 0, spritey: 26, },
-      { spritex: 0, spritey: 52, },
+      { spritex: 0, spritey: 0, }, // asa pra cima
+      { spritex: 31, spritey: 0, }, // asa no meio 
+      { spritex: 62, spritey: 0, }, // asa pra baixo
+      { spritex: 31, spritey: 0, }, // asa no meio
     ],
     frameatual: 0,
     atualizaoframeatual() {
@@ -314,7 +319,10 @@ function mudaparatela(novatela) {
   telaativa = novatela;
 
   if (telaativa.inicializa) {
+    music.currentTime = 0;
+    music.play();
     telaativa.inicializa();
+
   }
 }
 const telas = {
@@ -326,7 +334,7 @@ const telas = {
       globais.canos = criacanos();
     },
     desenha() {
-      planoDeFundo.desenha();
+      planodefundo.desenha();
       globais.flappybird.desenha();
 
       globais.chao.desenha();
@@ -348,7 +356,7 @@ telas.jogo = {
     globais.placar = criaplacar();
   },
   desenha() {
-    planoDeFundo.desenha();
+    planodefundo.desenha();
     globais.canos.desenha();
     globais.chao.desenha();
     globais.flappybird.desenha();
@@ -385,11 +393,20 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-window.addEventListener('click', function () {
-  if (telaativa.click) {
+window.addEventListener('click', function() {
+  if(telaativa.click) {
     telaativa.click();
   }
 });
+
+window.addEventListener('keydown', function(e) {
+ // console.log(e);
+  if (e.keyCode == 38) {
+    e.preventDefault();
+    telaativa.click();
+  }
+});
+
 mudaparatela(telas.inicio);
 loop();
 
