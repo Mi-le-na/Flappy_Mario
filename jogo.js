@@ -33,7 +33,6 @@ const planodefundo = {
       planodefundo.x, planodefundo.y,
       planodefundo.largura, planodefundo.altura,
     );
-
     contexto.drawImage(
       sprites,
       planodefundo.spritex, planodefundo.spritey,
